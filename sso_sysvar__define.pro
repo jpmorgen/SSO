@@ -1,5 +1,5 @@
 ; +
-; $Id: sso_sysvar__define.pro,v 1.1 2004/01/14 17:38:18 jpmorgen Exp $
+; $Id: sso_sysvar__define.pro,v 1.2 2004/01/15 17:07:23 jpmorgen Exp $
 
 ; sso_sysvar__define.pro 
 
@@ -43,10 +43,10 @@ pro sso_sysvar__define
        $ ;; continuum, converts equivalent width to area.  Be 
        $ ;; default, delta wavelength and equivalent width read
        $ ;; in milli Angstroms
-       c	: 299792.458, $ ;; km/s
-       dwcvt	: 0.001, $
-       ewcvt	: 0.001, $
-       lwcvt	: 0.001, $
+       c	: 299792.458d, $ ;; km/s, double precision
+       dwcvt	: 0.001d, $
+       ewcvt	: 0.001d, $
+       lwcvt	: 0.001d, $
        $ ;; ptype (parameter type) tokens.  The whole ptype tag is 
        $ ;; somewhat redundant, since pfo.ID could be used and the 
        $ ;; purpose of the parameter could probably be constructed 
@@ -62,8 +62,6 @@ pro sso_sysvar__define
        center	:	1, $
        area	:	2, $
        width	:	3, $
-       on	:	1, $
-       off	:	-1,$
        $ ;; Doppler group correspondences are stored as a linked list
        dgs	:	ptr_new(),    $
        aterm	:	-1., $	;; Array terminator for dg path array
