@@ -1,5 +1,5 @@
 ; +
-; $Id: sso_voigt.pro,v 1.1 2004/01/14 17:43:52 jpmorgen Exp $
+; $Id: sso_voigt.pro,v 1.2 2015/03/03 20:16:04 jpmorgen Exp $
 
 ; sso_voigt.pro 
 
@@ -19,29 +19,17 @@ pro sso_voigt, parinfo, idx, center=center, area=area, width=width, $
   dftypes = parinfo[idx].sso.pfo.pfo.ftype - $
             fix(parinfo[idx].sso.pfo.pfo.ftype)
 
-  if keyword_set(center) then begin
-     idx = where(0.09 lt dftypes and dftypes lt 0.11)
-     case center of
-        !sso.on : parinfo[idx[idx]].sso.ttype = !sso.center
-        !sso.off: parinfo[idx[idx]].sso.ttype = !sso.null
-        else	: message, 'ERROR: unrecognized transformation directive: center = ' + string(center)
-     endcase
+  if N_elements(center) ne 0 then begin
+     tidx = where(0.09 lt dftypes and dftypes lt 0.11)
+     parinfo[idx[tidx]].sso.ttype = !sso.center
   endif     
-  if keyword_set(area) then begin
-     idx = where(0.19 lt dftypes and dftypes lt 0.21)
-     case area of
-        !sso.on : parinfo[idx[idx]].sso.ttype = !sso.area
-        !sso.off: parinfo[idx[idx]].sso.ttype = !sso.null
-        else	: message, 'ERROR: unrecognized transformation directive: area = ' + string(area)
-     endcase
+  if N_elements(area) ne 0 then begin
+     tidx = where(0.19 lt dftypes and dftypes lt 0.21)
+     parinfo[idx[tidx]].sso.ttype = !sso.area
   endif     
-  if keyword_set(width) then begin
-     idx = where(dftypes gt 0.2)
-     case width of
-        !sso.on : parinfo[idx[idx]].sso.ttype = !sso.width
-        !sso.off: parinfo[idx[idx]].sso.ttype = !sso.null
-        else	: message, 'ERROR: unrecognized transformation directive: width = ' + string(width)
-     endcase
+  if N_elements(width) ne 0 then begin
+     tidx = where(dftypes gt 0.2)
+     parinfo[idx[tidx]].sso.ttype = !sso.width
   endif     
 
 end

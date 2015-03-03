@@ -1,11 +1,11 @@
 ; +
-; $Id: sso_struct__define.pro,v 1.1 2004/01/14 17:40:14 jpmorgen Exp $
+; $Id: sso_struct__define.pro,v 1.2 2015/03/03 20:13:27 jpmorgen Exp $
 
-; sso_parinfo__define.pro 
+; sso_struct__define.pro 
 
 ; This procedure makes use of the handy feature in IDL 5 that calls
 ; the procedure mystruct__define when mystruct is referenced.
-; Unfortunately, if IDL calls this proceedure itself, it uses its own
+; Unfortunately, if IDL calls this procedure itself, it uses its own
 ; idea of what null values should be.  Call explicitly with an
 ; if you need to have a default structure with different initial values.
 

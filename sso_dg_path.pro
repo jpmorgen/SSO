@@ -1,5 +1,5 @@
 ; +
-; $Id: sso_dg_path.pro,v 1.1 2004/01/14 17:43:28 jpmorgen Exp $
+; $Id: sso_dg_path.pro,v 1.2 2015/03/03 20:15:44 jpmorgen Exp $
 
 ; sso_dg_path.pro 
 
@@ -7,7 +7,10 @@
 ;; !sso.dgs linked list.  Return that path, or, if /names is
 ;; specified, the names of the objects, if they are found in the
 ;; !eph.names array.  An error occurs if dg does not exist in
-;; !sso.dgs.
+;; !sso.dgs.  If you want to make a single string out of the array of
+;; strings, use strjoin:
+;;
+;; strjoin(sso_dg_path(dg, /name), '-')
 
 ; -
 

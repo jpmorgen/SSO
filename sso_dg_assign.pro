@@ -1,5 +1,5 @@
 ; +
-; $Id: sso_dg_assign.pro,v 1.1 2004/01/14 17:42:04 jpmorgen Exp $
+; $Id: sso_dg_assign.pro,v 1.2 2015/03/03 20:15:03 jpmorgen Exp $
 
 ; sso_dg_assign.pro 
 
@@ -28,9 +28,11 @@
 
 ; -
 
-pro sso_dg_assign, parinfo, idx, clear=clear
+pro sso_dg_assign, parinfo, idx, clear=clear, count=count
 
   init = {sso_sysvar}
+
+  count = 0
 
   ;; Clean up the heap variables in !sso.dgs
   if keyword_set(clear) then begin
@@ -45,21 +47,22 @@ pro sso_dg_assign, parinfo, idx, clear=clear
 
   ;; Otherwise, add paths to !sso.dgs
 
-  ;; Pathological case, avoids indgen(0) error
-  n = N_elements(parinfo)
+  ;; Pathological case, avoids lindgen(0) error
   if N_elements(parinfo) eq 0 then $
     return
 
   ;; Set up idx if none specified
   if N_elements(idx) eq 0 then $
-    idx = indgen(n)
+    idx = lindgen(N_elements(parinfo))
 
-  for iidx=0, n-1 do begin
+
+  for iidx=long(0), N_elements(idx)-1 do begin
      ipfo = idx[iidx]
      path = parinfo[ipfo].sso.path
      if sso_path_dg(path) eq -1 then begin
-        ;; Add a new element to !sso.dg
-        new = !sso.dg_struct
+        ;; Add a new element to !sso.dgs.  Use a dynamically
+        ;; assignable dg_struct
+        new = (*!sso.dg_struct_ptr)
         ;; Increment Doppler group by one for each new path
         new.dg = 1
         if !sso.dgs ne ptr_new() then $
@@ -75,8 +78,7 @@ pro sso_dg_assign, parinfo, idx, clear=clear
   endfor ;; Each element in parinfo
   
   ;; Make sure we have one and only one Doppler shift parameter for
-  ;; each path.
-
+  ;; each non-zero path.
   dgs = parinfo.sso.dg
   ptypes = parinfo.sso.ptype
   ;; Find the list of unique Doppler groups we are using and step
@@ -85,6 +87,10 @@ pro sso_dg_assign, parinfo, idx, clear=clear
   u_dgs = uniq(dgs[idx], sort(dgs[idx]))
   for idg=0, N_elements(u_dgs)-1 do begin
      dg = dgs[idx[u_dgs[idg]]]
+     if dg eq 0 then CONTINUE
+     ;; Here is where we count the number of non-zero Doppler groups
+     ;; in !sso.dgs
+     count = count + 1
      dop_idx  = where(ptypes[idx] eq !sso.dop and $
                       dgs[idx] eq dg,  ndop)
      ;; If we are missing a Doppler shift parameter, make one and fix
@@ -92,6 +98,7 @@ pro sso_dg_assign, parinfo, idx, clear=clear
      if ndop eq 0 then begin
         dop_parinfo = sso_fcreate(!sso.dop, parinfo_template=parinfo, $
                                   path=sso_dg_path(dg), value=0, fixed=1)
+
         ;; Add this Doppler parameter to parinfo (and its idx too!).
         ;; Rather than try to recover mid stride, just call ourselves
         parinfo = [parinfo, dop_parinfo]
@@ -102,7 +109,7 @@ pro sso_dg_assign, parinfo, idx, clear=clear
      ;; If we have too many Doppler shift parameters, mark all but the
      ;; first for deletion
      if ndop gt 1 then $
-       parinfo.pfo.status[dop_idx[1:ndop-1]] = !pfo.delete
+       parinfo[dop_idx[1:ndop-1]].pfo.status = !pfo.delete
      
      ;; Assign a name to the Doppler shift parameter's primitive
      parinfo[dop_idx].sso.pfo.parname = !sso.ptnames[!sso.dop] + ' ' + $

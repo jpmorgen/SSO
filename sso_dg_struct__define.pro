@@ -1,5 +1,5 @@
 ; +
-; $Id: sso_dg_struct__define.pro,v 1.1 2004/01/14 17:39:01 jpmorgen Exp $
+; $Id: sso_dg_struct__define.pro,v 1.2 2015/03/03 20:17:27 jpmorgen Exp $
 
 ; sso_dg_struct__define.pro 
 
@@ -26,9 +26,11 @@ pro sso_dg_struct__define, dg_struct=dg_struct
        dg	: 0, $
        path	: lonarr(10), $
        names	: strarr(10), $
+       dv	: double(0), $
        next	: ptr_new()}
   ;; Initialize
   dg_struct.path[*] = -1
+  dg_struct.dv = !values.d_nan
   
 end
 

@@ -1,5 +1,5 @@
 ; +
-; $Id: sso_path_names.pro,v 1.1 2004/01/14 17:42:59 jpmorgen Exp $
+; $Id: sso_path_names.pro,v 1.2 2015/03/03 20:15:52 jpmorgen Exp $
 
 ; sso_path_names.pro 
 
@@ -20,6 +20,10 @@ function sso_path_names, path, string=string
        spath = !eph.names[path[ip]]
      apath = array_append(spath, apath)
      ip = ip + 1
+     if ip eq N_elements(path) then begin
+        message, 'ERROR: Hey, fix this bug!  The path was initilized to 0, not -1', /continue
+        return, apath
+     endif
   endwhile
   
   return, apath

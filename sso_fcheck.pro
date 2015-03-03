@@ -1,5 +1,5 @@
 ; +
-; $Id: sso_fcheck.pro,v 1.1 2004/01/14 17:40:51 jpmorgen Exp $
+; $Id: sso_fcheck.pro,v 1.2 2015/03/03 20:17:21 jpmorgen Exp $
 
 ; sso_fcheck.pro 
 
@@ -28,14 +28,14 @@ pro sso_fcheck, parinfo, idx
 
   init = {sso_sysvar}
 
-  ;; Pathological case, avoids indgen(0) error
+  ;; Pathological case, avoids lindgen(0) error
   n = N_elements(parinfo)
   if N_elements(parinfo) eq 0 then $
     return
 
   ;; Set up idx if none specified
   if N_elements(idx) eq 0 then $
-    idx = indgen(n)
+    idx = lindgen(n)
 
   sso_idx = where(parinfo[idx].pfo.ftype eq !pfo.sso, count)
   ;; Return quietly if we have no sso functions
