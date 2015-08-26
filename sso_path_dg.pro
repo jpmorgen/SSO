@@ -13,6 +13,9 @@ function sso_path_dg, path
 
   init = {sso_sysvar}
 
+  if N_elements(path) eq 0 then $
+     mesaage, 'ERROR: path required'
+
   ;; Return the sso null path (0) if the input path is not set
   t = where(path eq !sso.aterm, npath)
   if npath eq 0 then begin

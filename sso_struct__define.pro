@@ -13,8 +13,8 @@
 
 ;; Tag		Meaning
 ;; ptype	parameter type
-;;		1 = parameter used to define the continuum
-;;		2 = parameter is a Doppler shift
+;;		1 = parameter is a Doppler shift
+;;		2 = parameter used to define the continuum
 ;;		3 = parameter is used to define a line
 ;; ttype	Transformation type.  See sso documentation for
 ;; 		details about transformations
