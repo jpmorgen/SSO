@@ -165,6 +165,7 @@ function sso_get_wrange, pix_axis, parinfo, min_lines, iwrange, idx=idx, $
         wrange = [owls[min(inidx)], owls[max(inidx)]]
      endif ;; [i]wrange wasn't large enough to include any lines from this dg
 
+     ;; --> There might be an infinite loop here
      while nin lt min_lines do begin
         ;; Expand wavelength range until we encompass enough lines.
         ;; Find the next array index beyond the current wrange
