@@ -108,8 +108,10 @@ pro sso_plot_fit_axes, parinfo, idx, xaxis, xrange, upper_count=upper_count, $
   
 end
 
-pro sso_plot_fit_special, pix_axis, params, parinfo, idx, xrange, $
-  spec, err_spec, rpsym
+pro sso_plot_fit_special, $
+   pix_axis, params, parinfo, idx, xrange, $
+   spec, err_spec, rpsym, $
+   resid_yrange=resid_yrange ;; output keyword for setting yrange properly.  Returns without plotting if this is present
 
   ;; Overplot the contiuum without special lines (if they are in the
   ;; parameter list) and plot a vertical line indicating position of
@@ -180,6 +182,17 @@ pro sso_plot_fit_special, pix_axis, params, parinfo, idx, xrange, $
         ;; Check to see if we want to put plotting symbols onto the
         ;; errorbars (analog of residuals section 
         resid = spec - model_spec
+        ;; This is a bit of spaghetti code, but it is an easy mod.
+        ;; What I want to do is grab a good yrange when the special
+        ;; lines are out of the model and pass it back to the calling
+        ;; code
+        if arg_present(resid_yrange) then begin
+           resid_yrange = minmax(resid) + [0, median(err_spec)]
+           ;; Put back Doppler groups
+           sso_dg_assign, /clear
+           !sso.dgs = save_sso_dgs
+           return
+        endif
         sso_oploterr, xaxis, resid, err_spec, rpsym, linestyle=!tok.dotted
      endif else begin
         oplot, xaxis, model_spec, linestyle=!tok.dotted
@@ -301,15 +314,24 @@ pro sso_plot_fit, pix_axis, parinfo, params=params, idx=idx, spec, err_spec, $
   else $
     yrange = [min(spec), max(spec)]
 
-  if keyword_set(inresid_yrange) then $
-    resid_yrange = inresid_yrange $
-  else $
-    resid_yrange = [min(residual), max(residual)]
-  ;; try to bump out the residual axis range a little for plotting
-  ;; special residuals
-  rdelta = resid_yrange[1] - resid_yrange[0]
-  resid_yrange=[resid_yrange[0] - 0.2*rdelta, $
-                resid_yrange[1] + 0.2*rdelta]
+  if keyword_set(inresid_yrange) then begin
+     resid_yrange = inresid_yrange
+  endif else begin
+     ;; Use spaghetti code in sso_plot_fit_special to set resid_yrange
+     ;; before we officially calculate the residual, below.  No plot
+     ;; is actually done by this
+     sso_plot_fit_special, pix_axis, params, parinfo, f_idx, xrange, $
+                           spec, err_spec, rpsym, resid_yrange=resid_yrange
+     ;; If there are no specials, sso_plot_fit_special won't set resid_yrange
+     if NOT keyword_set(resid_yrange) then $
+        resid_yrange = [min(residual), max(residual)]
+  endelse
+
+  ;;;; try to bump out the residual axis range a little for plotting
+  ;;;; special residuals
+  ;;rdelta = resid_yrange[1] - resid_yrange[0]
+  ;;resid_yrange=[resid_yrange[0] - 0.2*rdelta, $
+  ;;              resid_yrange[1] + 0.2*rdelta]
 
   if keyword_set(intitle) then $
     title = intitle $
